@@ -122,12 +122,4 @@ def broadcast_photo(message):
 # -----------------------------
 # Start Polling (24/7)
 # -----------------------------
-bot.infinity_polling()        except:
-            pass
-
-    bot.send_message(message.chat.id, f"✅ {sent} জন ইউজারের কাছে ছবি সহ মেসেজ পাঠানো হয়েছে")
-
-# -----------------------------
-# Start Polling
-# -----------------------------
 bot.infinity_polling()
