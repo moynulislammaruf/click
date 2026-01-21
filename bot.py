@@ -31,7 +31,7 @@ def start(message):
     # Channel Button (placeholder, change later)
     markup.add(types.InlineKeyboardButton(
         text="📢 চ্যানেলে যুক্ত হই",
-        url="https://t.me/YourChannelLink"
+        url="https://t.me/Click_To_Earn_By_Nobab_Channel"
     ))
 
     bot.send_message(message.chat.id, text, reply_markup=markup)
