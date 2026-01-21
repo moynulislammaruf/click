@@ -23,12 +23,14 @@ def start(message):
         referrer_id = int(start_param)
         referrals[user_id] = referrer_id
     except:
-        referrer_id = user_id  # কেউ সরাসরি এসেছে, নিজের ID use
+        referrer_id = user_id  # যদি কেউ সরাসরি আসে, নিজের ID ব্যবহার
 
-    # Buttons
+    # -----------------
+    # Inline Buttons
+    # -----------------
     markup = types.InlineKeyboardMarkup(row_width=1)
 
-    # 1️⃣ Video placeholder
+    # 1️⃣ Video Placeholder
     video_btn = types.InlineKeyboardButton(
         text="🎬 কিভাবে ইনকাম করবেন?",
         url="https://t.me/NoVideoUploadedNow"
@@ -47,7 +49,7 @@ def start(message):
         url="https://t.me/Click_To_Earn_By_Nobab_Channel"
     )
 
-    # 4️⃣ Referral Button
+    # 4️⃣ Referral Link Button
     referral_btn = types.InlineKeyboardButton(
         text="📎 আমার রেফার লিংক",
         callback_data="send_referral"
@@ -79,7 +81,7 @@ def broadcast_text(message):
 
     msg = message.text.replace("/broadcast", "").strip()
     if not msg:
-        bot.reply_to(message, "লিখো: /broadcast তোমার মেসেজ")
+        bot.reply_to(message, "লিখো: /broadcast <মেসেজ>")
         return
 
     sent = 0
@@ -87,30 +89,40 @@ def broadcast_text(message):
         try:
             bot.send_message(user_id, msg)
             sent += 1
-        except:
-            pass
+        except Exception as e:
+            print(f"Error sending text to {user_id}: {e}")
 
-    bot.reply_to(message, f"✅ {sent} জন ইউজারের কাছে টেক্সট পাঠানো হয়েছে")
+    bot.reply_to(message, f"✅ {sent} জন ইউজারের কাছে Text মেসেজ পাঠানো হয়েছে")
 
 # -----------------------------
 # Photo + Caption Broadcast (Admin only)
 # -----------------------------
-@bot.message_handler(content_types=['photo'])
+@bot.message_handler(commands=['broadcastphoto'])
 def broadcast_photo(message):
     if message.chat.id != ADMIN_ID:
         return
 
-    users.add(message.chat.id)
+    if not message.reply_to_message or not message.reply_to_message.photo:
+        bot.reply_to(message, "❌ কোন Photo নেই। /broadcastphoto ব্যবহার করার আগে Photo reply করো।")
+        return
 
-    photo_id = message.photo[-1].file_id
-    caption = message.caption if message.caption else ""
+    photo_id = message.reply_to_message.photo[-1].file_id
+    caption = message.reply_to_message.caption if message.reply_to_message.caption else ""
 
     sent = 0
     for user_id in users:
         try:
             bot.send_photo(user_id, photo_id, caption=caption)
             sent += 1
-        except:
+        except Exception as e:
+            print(f"Error sending photo to {user_id}: {e}")
+
+    bot.send_message(message.chat.id, f"✅ {sent} জন ইউজারের কাছে ছবি + Text পাঠানো হয়েছে")
+
+# -----------------------------
+# Start Polling (24/7)
+# -----------------------------
+bot.infinity_polling()        except:
             pass
 
     bot.send_message(message.chat.id, f"✅ {sent} জন ইউজারের কাছে ছবি সহ মেসেজ পাঠানো হয়েছে")
